@@ -4,7 +4,7 @@ namespace app\index\controller;
 use app\BaseController;
 use app\index\validate\Login;
 use think\exception\ValidateException;
-use app\index\model\UserModel;
+use app\model\UserModel;
 use Firebase\JWT\JWT;
 
 class Account extends BaseController
