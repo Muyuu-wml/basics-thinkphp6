@@ -113,3 +113,20 @@ function salt($length = 8, $chars = null)
     }
     return $code;
 }
+
+/**
+ * 处理登录密码加密
+ *
+ * @param [type] $password 密码
+ * @param [type] $salt 密码盐
+ * @param string $type 加密方式 默认md5
+ * @return void
+ */
+function encryption($password, $salt, $type = 'md5')
+{
+    if ($type == 'md5') {
+        return md5(md5($password . $salt));
+    } else {
+        return hash('sha1', $password . $salt);
+    }
+}
