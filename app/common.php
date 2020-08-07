@@ -14,7 +14,8 @@ function success($msg = 'success', $data = [], $code = 200)
     $result['code'] = $code;
     $result['msg'] = $msg;
     $result['data'] = $data;
-    return json($result);
+    json($result)->send();
+    exit();
 }
 
 /**
@@ -30,7 +31,8 @@ function error($msg = 'error', $data = [], $code = 400)
     $result['code'] = $code;
     $result['msg'] = $msg;
     $result['data'] = $data;
-    return json($result);
+    json($result)->send();
+    exit();
 }
 
 /**

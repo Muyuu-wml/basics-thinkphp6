@@ -2,5 +2,5 @@
 
 return [
     //jwt加密的key
-    'key'=>'basics-thinkphp6'
+    'jwt_key'=>'basics-thinkphp6'
 ];

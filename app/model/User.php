@@ -9,31 +9,51 @@ class User extends Model
 {
     protected $autoWriteTimestamp = true;
 
+    public static function login($login_data)
+    {
+        $user = self::where('mobile', $login_data['mobile'])->find();
+        if ($user) {
+            if ($user['password'] == encryption($login_data['password'], $user['salt'])) {
+                try {
+                    $user->last_login_time = date('Y-m-d H:i:s');
+                    $user->save();
+                } catch (\Exception $e) {
+                    error('数据库内部错误');
+                }
+                return $user;
+            }else {
+                error('密码错误');
+            }
+        } else {
+            error('此手机号未注册');
+        }
+    }
+
     /**
      * 注册
      *
      * @param [type] $register_date 注册数据
      * @return void
      */
-    public static function register($register_date)
+    public static function register($register_data)
     {
-        if (self::where('mobile', $register_date['mobile'])->find()) {
-            return ['status' => false, 'smg' => '手机号已注册'];
+        if (self::where('mobile', $register_data['mobile'])->find()) {
+            error('手机号已注册');
         }
 
         $salt = salt();
         self::startTrans();
         try {
-            $user =  User::create([
-                'username' => '用户：' . $register_date['mobile'],
-                'mobile'   => $register_date['mobile'],
-                'password' => encryption($register_date['password'], $salt),
+            $user =  self::create([
+                'username' => '用户：' . $register_data['mobile'],
+                'mobile'   => $register_data['mobile'],
+                'password' => encryption($register_data['password'], $salt),
                 'salt'     => $salt,
             ]);
 
             // 判断是否是邀请用户
-            if ($register_date['invite_code']) {
-                $invite_user = self::where('invite_code', $register_date['invite_code'])->find();
+            if ($register_data['invite_code']) {
+                $invite_user = self::where('invite_code', $register_data['invite_code'])->find();
                 if ($invite_user) {
                     InviteRecord::create([
                         'user_id'     => $invite_user['id'],
@@ -45,7 +65,7 @@ class User extends Model
             self::commit();
         } catch (\Exception $e) {
             self::rollback();
-            return ['status' => false, 'smg' => '数据库内部错误'];
+            error('数据库内部错误');
         }
 
         return true;
