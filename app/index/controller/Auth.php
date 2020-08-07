@@ -7,7 +7,6 @@ use Firebase\JWT\JWT;
 
 class Auth extends BaseController
 {
-    private $token;
     private $user_id;
 
     /**

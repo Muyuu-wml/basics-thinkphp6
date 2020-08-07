@@ -18,17 +18,33 @@ class Account extends BaseController
     public function login()
     {
         $login_data = [
-            'mobile'   => input('mobile'),
-            'password' => trim(strtolower(input('password')))
+            'mobile'       => input('mobile'),
+            'password'     => trim(input('password')),
+            'type'         => input('type'),
+            'sms_code'     => input('sms_code'),
+            'sms_code_key' => input('sms_code_key'),
         ];
 
-        try {
-            validate(Login::class)->check($login_data);
-        } catch (ValidateException $e) {
-            return error($e->getError());
+        if (!$login_data['type']) {
+            try {
+                validate(Login::class)->check($login_data);
+            } catch (ValidateException $e) {
+                return error($e->getError());
+            }
+            $res = User::login($login_data);
+        } else {
+            // 验证码登录
+            if (empty($login_data['sms_code']) || empty($login_data['sms_code_key'])) {
+                error('验证码不能为空');
+            }
+            // 判断短信验证码是否正确
+            checkSmsCode($login_data['sms_code_key'], $login_data['sms_code']);
+            $res = User::getUserByMobile($login_data['mobile']);
         }
 
-        $res = User::login($login_data);
+        if($res['status'] == 1){
+            error('此用户已被锁定');
+        }
 
         $token_arr = [
             'user_id'     => $res['id'],
@@ -49,7 +65,7 @@ class Account extends BaseController
     {
         $register_data = [
             'mobile'       => input('mobile'),
-            'password'     => trim(strtolower(input('password'))),
+            'password'     => trim(input('password')),
             'sms_code'     => input('sms_code'),
             'sms_code_key' => input('sms_code_key'),
             'invite_code'  => input('invite_code')
@@ -66,20 +82,7 @@ class Account extends BaseController
         }
 
         // 判断短信验证码是否正确
-        $cache_sms_code_data = cache($register_data['sms_code_key']);
-        if ($cache_sms_code_data === false) {
-            error('验证码错误');
-        } else {
-            // 短信验证码是否过期
-            if (time() > $cache_sms_code_data['expire_time']) {
-                error('验证码已过期');
-            } else {
-                // 判断输入的验证码是否正确
-                if ($register_data['sms_code'] != $cache_sms_code_data['sms_code']) {
-                    error('验证码错误');
-                }
-            }
-        }
+        checkSmsCode($register_data['sms_code_key'], $register_data['sms_code']);
 
         $res = User::register($register_data);
         if ($res == true) {
@@ -87,5 +90,33 @@ class Account extends BaseController
         } else {
             error('注册失败');
         }
+    }
+
+    /**
+     * 忘记密码
+     *
+     * @return void
+     */
+    public function forgetPassword()
+    {
+        $forget_password_data = [
+            'mobile'       => input('mobile'),
+            'password'     => trim(input('password')),
+            'sms_code'     => input('sms_code'),
+            'sms_code_key' => input('sms_code_key'),
+        ];
+
+        try {
+            validate(Login::class)->check($forget_password_data);
+        } catch (ValidateException $e) {
+            error($e->getError());
+        }
+
+        if (empty($forget_password_data['sms_code']) || empty($forget_password_data['sms_code_key'])) {
+            error('验证码不能为空');
+        }
+
+        // 判断短信验证码是否正确
+        checkSmsCode($forget_password_data['sms_code_key'], $forget_password_data['sms_code']);
     }
 }

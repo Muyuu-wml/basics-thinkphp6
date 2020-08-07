@@ -9,9 +9,15 @@ class User extends Model
 {
     protected $autoWriteTimestamp = true;
 
+    /**
+     * 登录
+     *
+     * @param [type] $login_data
+     * @return void
+     */
     public static function login($login_data)
     {
-        $user = self::where('mobile', $login_data['mobile'])->find();
+        $user = self::where('mobile', $login_data['mobile'])->where('delete_time', null)->find();
         if ($user) {
             if ($user['password'] == encryption($login_data['password'], $user['salt'])) {
                 try {
@@ -37,7 +43,7 @@ class User extends Model
      */
     public static function register($register_data)
     {
-        if (self::where('mobile', $register_data['mobile'])->find()) {
+        if (self::where('mobile', $register_data['mobile'])->where('delete_time', null)->find()) {
             error('手机号已注册');
         }
 
@@ -53,7 +59,7 @@ class User extends Model
 
             // 判断是否是邀请用户
             if ($register_data['invite_code']) {
-                $invite_user = self::where('invite_code', $register_data['invite_code'])->find();
+                $invite_user = self::where('invite_code', $register_data['invite_code'])->where('delete_time', null)->find();
                 if ($invite_user) {
                     InviteRecord::create([
                         'user_id'     => $invite_user['id'],
@@ -69,5 +75,19 @@ class User extends Model
         }
 
         return true;
+    }
+
+    public static function getUserByMobile($mobile)
+    {
+        if(empty($mobile)){
+            error('手机号不能为空');
+        }
+
+        $user = self::where('mobile', $mobile)->where('delete_time', null)->find();
+        if($user){
+            return $user;
+        }else{
+            error('没有此用户信息');
+        }
     }
 }
