@@ -24,24 +24,27 @@ class Auth extends BaseController
             // options 方法探测 header
             exit('ok');
         }
+
         //获取头部信息(存储头部token的地方)
         $token = request()->header('Authorization');
         if (empty($token)) {
-            $token = input('token');
+            $token = input('Authorization');
         }
-        //判断用户token是否过期或者是否非法
+
         //判断用户token是否过期或者是否非法
         if (empty($token)) {
             error('AccessToken is empty', 401);
         }
         $this->token = $token;
+
         //判断token是否为非法的token
-        $key = config('system.key');
+        $key = config('system.access_jwt_key');
         try {
             $token_arr = (array)JWT::decode($token, $key, array('HS256'));
         } catch (\UnexpectedValueException $exception) {
             error('Invalid AccessToken', 401);
         }
+
         if (empty($token_arr)) {
             error('Invalid AccessToken', 401);
         } else {

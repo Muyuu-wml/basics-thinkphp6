@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * 账户相关控制器
+ */
 namespace app\index\controller;
 
 use app\BaseController;
@@ -24,18 +26,19 @@ class Account extends BaseController
             'sms_code'     => input('sms_code'),
             'sms_code_key' => input('sms_code_key'),
         ];
-
+        $res = '';
         if (!$login_data['type']) {
             try {
-                validate(Login::class)->check($login_data);
+                validate(Login::class)->scene('login_password')->check($login_data);
             } catch (ValidateException $e) {
                 return error($e->getError());
             }
             $res = User::login($login_data);
         } else {
-            // 验证码登录
-            if (empty($login_data['sms_code']) || empty($login_data['sms_code_key'])) {
-                error('验证码不能为空');
+            try {
+                validate(Login::class)->scene('sms')->check($login_data);
+            } catch (ValidateException $e) {
+                return error($e->getError());
             }
             // 判断短信验证码是否正确
             checkSmsCode($login_data['sms_code_key'], $login_data['sms_code']);
@@ -46,14 +49,33 @@ class Account extends BaseController
             error('此用户已被锁定');
         }
 
-        $token_arr = [
+        $access_token_arr = [
             'user_id'     => $res['id'],
-            'expire_time' => strtotime('+10 day') // token的过期时间为十天
+            'expire_time' => strtotime('+2 hours') // access_token的过期时间为2小时
         ];
-        $key = config('system.jwt_key');
-        $jwt_token = JWT::encode($token_arr, $key);
-        $data['token'] = $jwt_token;
-        success('登录成功', $data);
+        $access_jwt_token = JWT::encode($access_token_arr, config('system.access_jwt_key'));
+
+        $refresh_token_arr = [
+            'user_id'     => $res['id'],
+            'expire_time' => strtotime('+1 month') // refresh_token的过期时间为1个月
+        ];
+        $refresh_jwt_token = JWT::encode($refresh_token_arr, config('system.refresh_jwt_key'));
+
+        $jwt_data = [
+            'access_jwt_token' => $access_jwt_token,
+            'refresh_jwt_token' => $refresh_jwt_token,
+        ];
+        success('登录成功', $jwt_data);
+    }
+
+    /**
+     * 通过RefreshToken获取AccessToken
+     *
+     * @return void
+     */
+    public function getAccessTokenByRefreshToken()
+    {
+
     }
 
     /**
@@ -72,13 +94,9 @@ class Account extends BaseController
         ];
 
         try {
-            validate(Login::class)->check($register_data);
+            validate(Login::class)->scene('register')->check($register_data);
         } catch (ValidateException $e) {
             error($e->getError());
-        }
-
-        if (empty($register_data['sms_code']) || empty($register_data['sms_code_key'])) {
-            error('验证码不能为空');
         }
 
         // 判断短信验证码是否正确
@@ -93,7 +111,7 @@ class Account extends BaseController
     }
 
     /**
-     * 忘记密码
+     * 忘记密码,通过短信修改
      *
      * @return void
      */
@@ -107,16 +125,19 @@ class Account extends BaseController
         ];
 
         try {
-            validate(Login::class)->check($forget_password_data);
+            validate(Login::class)->scene('sms')->check($forget_password_data);
         } catch (ValidateException $e) {
             error($e->getError());
         }
 
-        if (empty($forget_password_data['sms_code']) || empty($forget_password_data['sms_code_key'])) {
-            error('验证码不能为空');
-        }
-
         // 判断短信验证码是否正确
         checkSmsCode($forget_password_data['sms_code_key'], $forget_password_data['sms_code']);
+
+        $res = User::forgetPassword($forget_password_data);
+        if ($res == true) {
+            success('修改成功');
+        } else {
+            error('修改失败');
+        }
     }
 }

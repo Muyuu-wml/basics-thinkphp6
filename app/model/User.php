@@ -27,7 +27,7 @@ class User extends Model
                     error('数据库内部错误');
                 }
                 return $user;
-            }else {
+            } else {
                 error('密码错误');
             }
         } else {
@@ -77,16 +77,50 @@ class User extends Model
         return true;
     }
 
+    /**
+     * 忘记密码
+     *
+     * @param [type] $forget_password_data 忘记密码数据
+     * @return void
+     */
+    public static function forgetPassword($forget_password_data, $user_id = 0)
+    {
+        if ($user_id) {
+            $where = [
+                ['id', '=', $user_id]
+            ];
+        } else {
+            $where = [
+                ['mobile', '=', $forget_password_data['mobile']]
+            ];
+        }
+
+        try {
+            $salt = self::where($where)->value('salt');
+            self::where($where)->update(['password' => encryption($forget_password_data['password'], $salt)]);
+        } catch (\Exception $e) {
+            error('数据库内部错误');
+        }
+
+        return true;
+    }
+
+    /**
+     * 通过用户手机号获取用户信息
+     *
+     * @param [type] $mobile
+     * @return void
+     */
     public static function getUserByMobile($mobile)
     {
-        if(empty($mobile)){
+        if (empty($mobile)) {
             error('手机号不能为空');
         }
 
         $user = self::where('mobile', $mobile)->where('delete_time', null)->find();
-        if($user){
+        if ($user) {
             return $user;
-        }else{
+        } else {
             error('没有此用户信息');
         }
     }

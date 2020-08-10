@@ -71,6 +71,21 @@ function convertXml($param)
 }
 
 /**
+ * 获取单机唯一id
+ *
+ * @return void
+ */
+function UUID(){
+    $char_id = md5(uniqid(mt_rand(), true));
+    $uuid = substr($char_id, 0, 8)
+        .substr($char_id, 8, 4)
+        .substr($char_id,12, 4)
+        .substr($char_id,16, 4)
+        .substr($char_id,20,12);
+    return $uuid;
+}
+
+/**
  * 获取邀请码
  *
  * @return void
