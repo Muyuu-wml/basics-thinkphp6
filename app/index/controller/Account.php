@@ -6,9 +6,9 @@ namespace app\index\controller;
 
 use app\BaseController;
 use app\index\validate\Login;
+use app\index\controller\TokenService;
 use think\exception\ValidateException;
 use app\model\User;
-use Firebase\JWT\JWT;
 
 class Account extends BaseController
 {
@@ -48,23 +48,7 @@ class Account extends BaseController
         if($res['status'] == 1){
             error('此用户已被锁定');
         }
-
-        $access_token_arr = [
-            'user_id'     => $res['id'],
-            'expire_time' => strtotime('+2 hours') // access_token的过期时间为2小时
-        ];
-        $access_jwt_token = JWT::encode($access_token_arr, config('system.access_jwt_key'));
-
-        $refresh_token_arr = [
-            'user_id'     => $res['id'],
-            'expire_time' => strtotime('+1 month') // refresh_token的过期时间为1个月
-        ];
-        $refresh_jwt_token = JWT::encode($refresh_token_arr, config('system.refresh_jwt_key'));
-
-        $jwt_data = [
-            'access_jwt_token' => $access_jwt_token,
-            'refresh_jwt_token' => $refresh_jwt_token,
-        ];
+        $jwt_data = TokenService::getToken($res['id']);
         success('登录成功', $jwt_data);
     }
 
@@ -74,8 +58,16 @@ class Account extends BaseController
      * @return void
      */
     public function getAccessTokenByRefreshToken()
-    {
+    {   
+        $access_token = request()->header('Authorization');
+        $refresh_token = input('refresh_token');
+        
+        if (empty($access_token) || empty($refresh_token)) {
+            error('缺少token');
+        }
 
+        $jwt_data = TokenService::getAccessTokenByRefreshToken($access_token, $refresh_token);
+        success('登录成功', $jwt_data);
     }
 
     /**

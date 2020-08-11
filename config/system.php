@@ -5,6 +5,6 @@
 
 return [
     //jwt加密的key
-    'access_jwt_key'=>'basics-thinkphp6',
-    'refresh_jwt_token' => 'basics-thinkphp6'
+    'access_jwt_key'    => 'access_jwt_key',
+    'refresh_jwt_token' => 'refresh_jwt_token'
 ];
