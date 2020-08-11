@@ -13,7 +13,7 @@ class Login extends Validate
         // 正则表达式6-16位字符（英文/数字/符号）至少两种或下划线组合
         // 'password'  => ['require', 'regex' => '/^(\w*(?=\w*\d)(?=\w*[A-Za-z])\w*){6,16}$/'],
         'sms_code'     => ['require'],
-        'sms_code_key' => ['sms_code_key'],
+        'sms_code_key' => ['require'],
     ];
 
     protected $message  =   [

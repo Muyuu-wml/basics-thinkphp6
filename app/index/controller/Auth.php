@@ -38,4 +38,14 @@ class Auth extends BaseController
 
         $this->user_id = TokenService::checkToken($token);
     }
+
+    /**
+     * 获取user_id
+     *
+     * @return void
+     */
+    public function getUserId()
+    {
+        return $this->user_id;
+    }
 }
