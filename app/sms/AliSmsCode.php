@@ -10,19 +10,19 @@ class AliSmsCode
 {
     public static function sendSmsCode($mobile, $sms_code)
     {
-        $accessKeyId = 'LTAXXXXXXXXXC';
-        $accessSecret = '8gfwbXXXXXXXXXXXXXXXXXXXXXXXXXXXXA'; //注意不要有空格
-        $signName = 'XXXXX'; //配置签名
-        $templateCode = 'SMS_1XXXXXX5'; //配置短信模板编号
+        $accessKeyId  = config('system.access_key_id');
+        $accessSecret = config('system.access_secret'); //注意不要有空格
+        $signName     = config('system.sign_name'); //配置签名
+        $templateCode = config('system.template_code'); //配置短信模板编号
         //TODO 随机生成一个6位数
         //TODO 短信模板变量替换JSON串,友情提示:如果JSON中需要带换行符,请参照标准的JSON协议。
         $jsonTemplateParam = json_encode(['code' => $sms_code]);
 
         AlibabaCloud::accessKeyClient($accessKeyId, $accessSecret)
             ->regionId('cn-hangzhou')
-            ->asGlobalClient();
+            ->asDefaultClient();
         try {
-            $result = AlibabaCloud::rpcRequest()
+            $result = AlibabaCloud::rpc()
                 ->product('Dysmsapi')
                 // ->scheme('https') // https | http
                 ->version('2017-05-25')
@@ -30,10 +30,10 @@ class AliSmsCode
                 ->method('POST')
                 ->options([
                     'query' => [
-                        'RegionId' => 'cn-hangzhou',
-                        'PhoneNumbers' => $mobile, //目标手机号
-                        'SignName' => $signName,
-                        'TemplateCode' => $templateCode,
+                        'RegionId'      => 'cn-hangzhou',
+                        'PhoneNumbers'  => $mobile, //目标手机号
+                        'SignName'      => $signName,
+                        'TemplateCode'  => $templateCode,
                         'TemplateParam' => $jsonTemplateParam,
                     ],
                 ])
@@ -44,7 +44,7 @@ class AliSmsCode
                 //进行Cookie保存
                 return true;
             } else {
-                return $this->getErrorMessage($opRes['status']);
+                return self::getErrorMessage($opRes['status']);
             }
         } catch (ClientException $e) {
             error($e->getErrorMessage());
