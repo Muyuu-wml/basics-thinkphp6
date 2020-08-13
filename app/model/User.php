@@ -108,16 +108,28 @@ class User extends Model
     /**
      * 通过用户手机号获取用户信息
      *
-     * @param [type] $mobile
+     * @param [type] $mobile 手机号
      * @return void
      */
     public static function getUserByMobile($mobile)
     {
-        if (empty($mobile)) {
-            error('手机号不能为空');
+        $user = self::field('id, username, nickname, mobile, email, balance, attr, personal_profile, invite_code, status')->where('mobile', $mobile)->where('delete_time', null)->find();
+        if ($user) {
+            return $user;
+        } else {
+            error('没有此用户信息');
         }
+    }
 
-        $user = self::where('mobile', $mobile)->where('delete_time', null)->find();
+    /**
+     * 通过用户id获取用户信息
+     *
+     * @param [type] $user_id 用户id
+     * @return void
+     */
+    public static function getUserInfoById($user_id)
+    {
+        $user = self::field('id, username, nickname, mobile, email, balance, attr, personal_profile, invite_code, status')->where('id', $user_id)->where('delete_time', null)->find();
         if ($user) {
             return $user;
         } else {

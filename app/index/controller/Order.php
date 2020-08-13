@@ -2,7 +2,6 @@
 
 namespace app\index\controller;
 
-use app\BaseController;
 use app\index\validate\Order as OrderValidate;
 use think\exception\ValidateException;
 use app\model\Order as OrderModel;
@@ -10,7 +9,7 @@ use app\pay\AlipayService;
 use app\pay\WxpayService;
 use think\facade\Env;
 
-class Order extends BaseController
+class Order extends Auth
 {
     /**
      * 创建订单
@@ -20,10 +19,11 @@ class Order extends BaseController
     public function createOrder()
     {
         $order_data = [
-            // 'user_id'      => $this->getUserId(),
+            'user_id'      => $this->getUserId(),
             'out_trade_no' => makeOrderNo(),
             'goods_id'     => input('goods_id'),
-            'pay_type'     => input('pay_type') // 支付方式（支付宝支付：alipay 微信支付：wxpay）
+            'pay_type'     => input('pay_type'), // 支付方式（支付宝支付：alipay 微信支付：wxpay）
+            'quantity'     => input('quantity', 1)
         ];
 
         try {
@@ -41,9 +41,9 @@ class Order extends BaseController
                 $appKey     = config('system.appKey');
                 $apiKey     = config('system.apiKey');
                 $outTradeNo = $order_info['out_trade_no']; //你自己的商品订单号
-                $payAmount  = $order_info['amount']; //付款金额，单位                      : 元
+                $payAmount  = $order_info['amount']; //付款金额，单位:元
                 $orderName  = $order_info['goods_name']; //订单标题
-                $notifyUrl  = Env::get('APP.DOMAIN_NAME') . '/index/pay/PayNotify/notify?pay_type=wxpay'; //付款成功后的回调地址(不要有问号)
+                $notifyUrl  = Env::get('APP.DOMAIN_NAME').'/index/pay/PayNotify/notify?pay_type=wxpay'; //付款成功后的回调地址(不要有问号)
                 $returnUrl  = Env::get('APP.DOMAIN_NAME'); //付款成功后，页面跳转的地址
                 $wapUrl     = Env::get('APP.DOMAIN_NAME'); //WAP网站URL地址
                 $wapName    = Env::get('APP.APP_NAME'); //WAP 网站名
@@ -62,9 +62,9 @@ class Order extends BaseController
             } elseif ($order_info['pay_type'] == 'alipay') {
                 $appid         = config('system.appid');
                 $rsaPrivateKey = config('system.rsaPrivateKey');
-                $notifyUrl     = Env::get('APP.DOMAIN_NAME') . '/index/pay/PayNotify/notify?pay_status=alipay'; //付款成功后的异步回调地址
+                $notifyUrl     = Env::get('APP.DOMAIN_NAME').'/index/pay/PayNotify/notify?pay_status=alipay'; //付款成功后的异步回调地址
                 $outTradeNo    = $order_info['out_trade_no']; //你自己的商品订单号，不能重复
-                $payAmount     = $order_info['amount']; //付款金额，单位: 元
+                $payAmount     = $order_info['amount']; //付款金额，单位:元
                 $orderName     = $order_info['goods_name']; //订单标题
                 $signType      = 'RSA2'; //签名算法类型，支持RSA2和RSA，推荐使用RSA2
                 /*** 配置结束 ***/

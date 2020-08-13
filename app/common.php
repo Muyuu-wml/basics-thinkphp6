@@ -185,14 +185,9 @@ function checkSmsCode(string $sms_code_key, int $sms_code)
     if ($cache_sms_code_data === false) {
         error('验证码错误');
     } else {
-        // 短信验证码是否过期
-        if (time() > $cache_sms_code_data['expire_time']) {
-            error('验证码已过期');
-        } else {
-            // 判断输入的验证码是否正确
-            if ($sms_code != $cache_sms_code_data['sms_code']) {
-                error('验证码错误');
-            }
+        // 判断输入的验证码是否正确
+        if ($sms_code != $cache_sms_code_data['sms_code']) {
+            error('验证码错误');
         }
     }
 }

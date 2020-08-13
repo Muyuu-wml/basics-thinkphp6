@@ -6,7 +6,7 @@ namespace app\index\controller;
 
 use app\BaseController;
 use app\index\validate\Login;
-use app\index\controller\TokenService;
+use app\common\controller\TokenService;
 use think\exception\ValidateException;
 use app\model\User;
 

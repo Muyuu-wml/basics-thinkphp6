@@ -4,10 +4,11 @@
  * Token相关控制器
  */
 
-namespace app\index\controller;
+namespace app\common\controller;
 
 use app\BaseController;
 use Firebase\JWT\JWT;
+use think\facade\Env;
 
 class TokenService extends BaseController
 {
@@ -19,23 +20,34 @@ class TokenService extends BaseController
      */
     public static function getToken($user_id)
     {
-        $access_token_arr = [
-            'user_id'     => $user_id,
-            'expire_time' => strtotime('+2 hours') // access_token的过期时间为2小时
-        ];
-        $access_jwt_token = JWT::encode($access_token_arr, config('system.access_jwt_key'));
-
-        $refresh_token_arr = [
-            'user_id'     => $user_id,
-            'expire_time' => strtotime('+1 month') // refresh_token的过期时间为1个月
-        ];
-        $refresh_jwt_token = JWT::encode($refresh_token_arr, config('system.refresh_jwt_key'));
-
-        $jwt_data = [
-            'access_jwt_token' => $access_jwt_token,
-            'refresh_jwt_token' => $refresh_jwt_token,
-        ];
-
+        if (Env::get('APP.DOUBLE_TOKEN')) {
+            $access_token_arr = [
+                'user_id'     => $user_id,
+                'expire_time' => strtotime('+2 hours') // access_token的过期时间为2小时
+            ];
+            $access_jwt_token = JWT::encode($access_token_arr, config('system.access_jwt_key'));
+    
+            $refresh_token_arr = [
+                'user_id'     => $user_id,
+                'expire_time' => strtotime('+1 month') // refresh_token的过期时间为1个月
+            ];
+            $refresh_jwt_token = JWT::encode($refresh_token_arr, config('system.refresh_jwt_key'));
+    
+            $jwt_data = [
+                'access_jwt_token' => $access_jwt_token,
+                'refresh_jwt_token' => $refresh_jwt_token,
+            ];
+        } else {
+            $access_token_arr = [
+                'user_id'     => $user_id,
+                'expire_time' => strtotime('+10 day') // access_token的过期时间为10天
+            ];
+            $access_jwt_token = JWT::encode($access_token_arr, config('system.access_jwt_key'));
+            $jwt_data = [
+                'access_jwt_token' => $access_jwt_token,
+            ];
+        }
+        
         return $jwt_data;
     }
 
