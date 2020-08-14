@@ -92,6 +92,10 @@ class Order extends Auth
      */
     public function orderList()
     {
-
+        $where = [
+            ['user_id', '=', $this->getUserId()]
+        ];
+        $order_list = OrderModel::getOrderList($where);
+        success('订单列表', $order_list);
     }
 }

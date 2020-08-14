@@ -67,14 +67,14 @@ class TokenService extends BaseController
             $access_token_arr = (array)JWT::decode($access_token, $access_jwt_key, array('HS256'));
             $refresh_jwt_arr = (array)JWT::decode($refresh_token, $refresh_jwt_token, array('HS256'));
         } catch (\UnexpectedValueException $exception) {
-            error('Token Error', 403);
+            error('Token Error', [], 403);
         }
 
         if (isset($access_token_arr['user_id']) && isset($access_token_arr['expire_time']) && isset($refresh_jwt_arr['user_id']) && isset($refresh_jwt_arr['expire_times'])) {
             if (time() > $access_token_arr['expire_time'] && time() < $refresh_jwt_token['expire_time']) {
                 return self::getToken($refresh_jwt_token['useer_id']);
             } elseif (time() > $access_token_arr['expire_time'] && time() > $refresh_jwt_token['expire_time']) {
-                error('登录认证过期', 403);
+                error('登录认证过期', [], 403);
             } elseif (time() < $access_token_arr['expire_time'] && time() < $refresh_jwt_token['expire_time']) {
                 return [$access_token, $refresh_token];
             }
@@ -95,11 +95,11 @@ class TokenService extends BaseController
         try {
             $token_arr = (array)JWT::decode($token, $access_jwt_key, array('HS256'));
         } catch (\UnexpectedValueException $exception) {
-            error('Invalid AccessToken', 401);
+            error('Invalid AccessToken', [], 401);
         }
 
         if (empty($token_arr)) {
-            error('Invalid AccessToken', 401);
+            error('Invalid AccessToken', [], 401);
         } else {
             //判断token是否非法的
             if (isset($token_arr['user_id']) && isset($token_arr['expire_time'])) {
@@ -108,13 +108,13 @@ class TokenService extends BaseController
                     if (time() <= $token_arr['expire_time']) {
                         return $token_arr['user_id'];
                     } else {
-                        error('登录认证过期', 402);
+                        error('登录认证过期', [], 402);
                     }
                 } else {
-                    error('Invalid AccessToken', 401);
+                    error('Invalid AccessToken', [], 401);
                 }
             } else {
-                error('Invalid AccessToken', 401);
+                error('Invalid AccessToken', [], 401);
             }
         }
     }

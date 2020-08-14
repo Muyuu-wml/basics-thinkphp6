@@ -33,7 +33,7 @@ class Auth extends BaseController
 
         //判断用户token是否过期或者是否非法
         if (empty($token)) {
-            error('AccessToken is empty', 401);
+            error('AccessToken is empty', [], 401);
         }
 
         $this->user_id = TokenService::checkToken($token);

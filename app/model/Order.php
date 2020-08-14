@@ -64,4 +64,20 @@ class Order extends Model
             error('没有此订单');
         }
     }
+
+    /**
+     * 用户订单列表
+     *
+     * @param [type] $user_id
+     * @return void
+     */
+    public static function getOrderList($where)
+    {
+        try {
+            $order_list = self::field('id, user_id, out_trade_no, goods_id, goods_name, amount, status, pay_type, create_time')->where($where)->where('delete_time', null)->paginate(10);
+            return $order_list;
+        } catch (\Exception $e) {
+            error('数据库内部错误');
+        }
+    }
 }

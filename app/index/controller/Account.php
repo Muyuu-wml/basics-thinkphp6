@@ -118,7 +118,7 @@ class Account extends BaseController
         ];
 
         try {
-            validate(Login::class)->scene('sms')->check($forget_password_data);
+            validate(Login::class)->scene('register')->check($forget_password_data);
         } catch (ValidateException $e) {
             error($e->getError());
         }
