@@ -4,7 +4,7 @@
  * Token相关控制器
  */
 
-namespace app\common\controller;
+namespace app\common\token;
 
 use app\BaseController;
 use Firebase\JWT\JWT;

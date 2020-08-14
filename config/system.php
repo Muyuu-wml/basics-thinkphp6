@@ -22,6 +22,10 @@ return [
     'access_key_id' => '',
     'access_secret' => '',
     'sign_name'     => '',
-    'template_code' => ''
+    'template_code' => '',
+
+    // 短信宝短信
+    'dxb_username' => '',
+    'dxb_password' => '',
 
 ];

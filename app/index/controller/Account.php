@@ -6,7 +6,8 @@ namespace app\index\controller;
 
 use app\BaseController;
 use app\index\validate\Login;
-use app\common\controller\TokenService;
+use app\common\token\TokenService;
+use app\common\sms\SmsService;
 use think\exception\ValidateException;
 use app\model\User;
 
@@ -41,7 +42,7 @@ class Account extends BaseController
                 return error($e->getError());
             }
             // 判断短信验证码是否正确
-            checkSmsCode($login_data['sms_code_key'], $login_data['sms_code']);
+            SmsService::checkSmsCode($login_data['sms_code_key'], $login_data['sms_code']);
             $res = User::getUserByMobile($login_data['mobile']);
         }
 
@@ -92,7 +93,7 @@ class Account extends BaseController
         }
 
         // 判断短信验证码是否正确
-        checkSmsCode($register_data['sms_code_key'], $register_data['sms_code']);
+        SmsService::checkSmsCode($register_data['sms_code_key'], $register_data['sms_code']);
 
         $res = User::register($register_data);
         if ($res == true) {
@@ -123,7 +124,7 @@ class Account extends BaseController
         }
 
         // 判断短信验证码是否正确
-        checkSmsCode($forget_password_data['sms_code_key'], $forget_password_data['sms_code']);
+        SmsService::checkSmsCode($forget_password_data['sms_code_key'], $forget_password_data['sms_code']);
 
         $res = User::forgetPassword($forget_password_data);
         if ($res == true) {

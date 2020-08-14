@@ -1,6 +1,6 @@
 <?php
 
-namespace app\pay;
+namespace app\common\pay;
 
 use app\model\Order;
 use think\Collection;

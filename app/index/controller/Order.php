@@ -5,8 +5,8 @@ namespace app\index\controller;
 use app\index\validate\Order as OrderValidate;
 use think\exception\ValidateException;
 use app\model\Order as OrderModel;
-use app\pay\AlipayService;
-use app\pay\WxpayService;
+use app\common\pay\AlipayService;
+use app\common\pay\WxpayService;
 use think\facade\Env;
 
 class Order extends Auth
@@ -43,7 +43,7 @@ class Order extends Auth
                 $outTradeNo = $order_info['out_trade_no']; //你自己的商品订单号
                 $payAmount  = $order_info['amount']; //付款金额，单位:元
                 $orderName  = $order_info['goods_name']; //订单标题
-                $notifyUrl  = Env::get('APP.DOMAIN_NAME').'/index/pay/PayNotify/notify?pay_type=wxpay'; //付款成功后的回调地址(不要有问号)
+                $notifyUrl  = Env::get('APP.DOMAIN_NAME').'/common/pay/PayNotify/notify?pay_type=wxpay'; //付款成功后的回调地址(不要有问号)
                 $returnUrl  = Env::get('APP.DOMAIN_NAME'); //付款成功后，页面跳转的地址
                 $wapUrl     = Env::get('APP.DOMAIN_NAME'); //WAP网站URL地址
                 $wapName    = Env::get('APP.APP_NAME'); //WAP 网站名
@@ -62,7 +62,7 @@ class Order extends Auth
             } elseif ($order_info['pay_type'] == 'alipay') {
                 $appid         = config('system.appid');
                 $rsaPrivateKey = config('system.rsaPrivateKey');
-                $notifyUrl     = Env::get('APP.DOMAIN_NAME').'/index/pay/PayNotify/notify?pay_status=alipay'; //付款成功后的异步回调地址
+                $notifyUrl     = Env::get('APP.DOMAIN_NAME').'/common/pay/PayNotify/notify?pay_status=alipay'; //付款成功后的异步回调地址
                 $outTradeNo    = $order_info['out_trade_no']; //你自己的商品订单号，不能重复
                 $payAmount     = $order_info['amount']; //付款金额，单位:元
                 $orderName     = $order_info['goods_name']; //订单标题

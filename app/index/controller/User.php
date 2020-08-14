@@ -16,8 +16,8 @@ class User extends BaseController
      */
     public function getUserInfo()
     {
-        $user_info = UserModel::getUserInfoById(1);
-        success('用户信息', $user_info);
+        // $user_info = UserModel::getUserInfoById($this->getUserId());
+        // success('用户信息', $user_info);
     }
 
     /**

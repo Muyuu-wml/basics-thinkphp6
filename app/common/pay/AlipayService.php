@@ -1,5 +1,5 @@
 <?php
-namespace app\pay;
+namespace app\common\pay;
 
 class AlipayService
 {

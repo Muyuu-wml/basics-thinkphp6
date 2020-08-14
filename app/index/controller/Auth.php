@@ -3,7 +3,7 @@
 namespace app\index\controller;
 
 use app\BaseController;
-use app\common\controller\TokenService;
+use app\common\token\TokenService;
 
 class Auth extends BaseController
 {

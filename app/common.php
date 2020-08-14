@@ -173,21 +173,55 @@ function encryption($password, $salt, $type = 'md5')
 }
 
 /**
- * 判断短信验证码是否正确
+ * http的get请求
  *
- * @param string $sms_code_key
- * @param integer $sms_code
+ * @param [type] $url 请求url
+ * @param array $data 请求数据
  * @return void
  */
-function checkSmsCode(string $sms_code_key, int $sms_code)
-{
-    $cache_sms_code_data = cache($sms_code_key);
-    if ($cache_sms_code_data === false) {
-        error('验证码错误');
-    } else {
-        // 判断输入的验证码是否正确
-        if ($sms_code != $cache_sms_code_data['sms_code']) {
-            error('验证码错误');
-        }
+function http_get($url, $data = array()) {
+    $curl = curl_init();
+    if($data){
+        $submit_url = $url;
+    }else{
+        //这里的$data 如果传递的是数组需要http_build_query($data)
+        $submit_url = $url . '?' . http_build_query($data);
     }
+    curl_setopt($curl, CURLOPT_URL, $submit_url);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_TIMEOUT,60);
+    $output = curl_exec($curl);
+    curl_close($curl);
+    return $output;
+}
+
+/**
+ * http post请求
+ *
+ * @param [type] $url 请求url
+ * @param array $data 请求数据
+ * @param integer $is_json_post 是否转为json数据
+ * @return void
+ */
+function http_post($url, $data = [], $is_json_post = 0){
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+    if (!empty($data)) {
+        curl_setopt($curl, CURLOPT_POST, 1);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+    }
+    if($is_json_post){
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json'
+        ));
+    }
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_TIMEOUT,60);
+    $output = curl_exec($curl);
+    curl_close($curl);
+    return $output;
 }

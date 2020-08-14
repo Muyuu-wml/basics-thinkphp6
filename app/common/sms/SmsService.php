@@ -4,7 +4,7 @@
  * 短信相关控制器
  */
 
-namespace app\common\controller;
+namespace app\common\sms;
 
 use app\BaseController;
 use think\facade\Cache;
@@ -22,7 +22,7 @@ class SmsService extends BaseController
             'sms_code' => mt_rand(100000, 999999),
         ];
 
-        $class = "\app\sms\\" . $type . "SmsCode";
+        $class = "\app\common\sms\\" . $type . "SmsCode";
         $res = $class::sendSmsCode($mobile, $sms_data['sms_code']);
         
         if ($res !== true) {
@@ -62,4 +62,24 @@ class SmsService extends BaseController
             return false;
         }
     }
+
+    /**
+     * 判断短信验证码是否正确
+     *
+     * @param string $sms_code_key
+     * @param integer $sms_code
+     * @return void
+     */
+    public static function checkSmsCode($sms_code_key, $sms_code)
+    {
+        $cache_sms_code = Cache::get($sms_code_key);
+        if ($cache_sms_code === false) {
+            error('验证码错误');
+        } else {
+            // 判断输入的验证码是否正确
+            if ($sms_code != $cache_sms_code) {
+                error('验证码错误');
+            }
+        }
+    } 
 }

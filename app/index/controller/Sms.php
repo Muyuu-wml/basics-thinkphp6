@@ -6,7 +6,7 @@
 namespace app\index\controller;
 
 use app\BaseController;
-use app\common\controller\SmsService;
+use app\common\sms\SmsService;
 
 class Sms extends BaseController
 {
