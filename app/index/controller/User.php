@@ -29,4 +29,34 @@ class User extends BaseController
     {
         
     }
+
+    /**
+     * 修改密码
+     *
+     * @return void
+     */
+    public function updateUserPassword()
+    {
+
+    }
+
+    /**
+     * 获取我的邀请码
+     *
+     * @return void
+     */
+    public function inviteCode()
+    {   
+
+    }
+
+    /**
+     * 邀请记录
+     *
+     * @return void
+     */
+    public function inviteRecord()
+    {
+
+    }
 }

@@ -84,4 +84,14 @@ class Order extends Auth
             error('创建订单失败');
         }
     }
+
+    /**
+     * 订单列表
+     *
+     * @return void
+     */
+    public function orderList()
+    {
+
+    }
 }
