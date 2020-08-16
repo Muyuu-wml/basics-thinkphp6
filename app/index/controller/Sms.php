@@ -12,15 +12,15 @@ class Sms extends BaseController
 {
     private $mobile;
 
-    public function __construct()
+    public function initialize()
     {
         $mobile = input('mobile');
 
         $validate = \think\facade\Validate::rule(['mobile' => ['require', 'mobile']]);
-        if (!$validate->check(['mobile' => $mobile])) {
-            error($validate->getError());
-        } else {
+        if ($validate->check(['mobile' => $mobile])) {
             $this->mobile = $mobile;
+        } else {
+            error($validate->getError());
         }
     }
 

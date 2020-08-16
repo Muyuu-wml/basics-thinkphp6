@@ -14,7 +14,7 @@ class File extends Auth
     /**
      * 文件上传请使用POST请求
      */
-    public function __construct()
+    public function initialize()
     {
         if (request()->isGet()){
             error('请求类型错误');
