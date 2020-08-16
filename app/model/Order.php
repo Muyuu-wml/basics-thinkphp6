@@ -18,9 +18,9 @@ class Order extends Model
      */
     public static function createOrder(array $order_data)
     {
+        // 获取商品相关信息
         $goods_info = Goods::where('id', $order_data['goods_id'])->where('delete_time', null)->find();
         if ($goods_info) {
-            
             $order_data['amount'] = $goods_info['amount'] * $order_data['quantity'];
             $order_data['goods_name'] = $goods_info['name'];
             self::startTrans();
