@@ -28,4 +28,9 @@ return [
     'dxb_username' => '',
     'dxb_password' => '',
 
+    // 七牛云相关
+    'qiniu_access_key'    => '',
+    'qiniu_access_secret' => '',
+    'qiniu_bucket'        => '',
+
 ];

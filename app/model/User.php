@@ -4,6 +4,7 @@ namespace app\model;
 
 use think\Model;
 use app\model\InviteRecord;
+use think\facade\Env;
 
 class User extends Model
 {
@@ -131,9 +132,101 @@ class User extends Model
     {
         $user = self::field('id, username, nickname, mobile, email, balance, attr, personal_profile, invite_code, status')->where('id', $user_id)->where('delete_time', null)->find();
         if ($user) {
+            if (empty($user['invite_code'])) {
+                $invite_code = self::getInviteCode();
+                try {
+                    self::where('id', $user_id)->update(['invite_code' => $invite_code]);
+                    $user['invite_code'] = $invite_code;
+                } catch (\Exception $e) {
+                    error('数据库内部错误');
+                }
+            }
             return $user;
         } else {
             error('没有此用户信息');
+        }
+    }
+
+    /**
+     * 递归判断邀请码是否重复
+     *
+     * @return void
+     */
+    public static function getInviteCode()
+    {
+        $invite_code = inviteCode();
+        if (self::recode($invite_code)) {
+            return $invite_code;
+        } else {
+            self::getInviteCode();
+        }
+    }
+
+    public static function recode($invite_code)
+    {
+        if (self::where('invite_code', $invite_code)->find()) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 修改用户信息
+     *
+     * @param [type] $user_id 用户id
+     * @param [type] $update_user_info_data 用户修改信息
+     * @return void
+     */
+    public static function updateUserInfo($user_id, $update_user_info_data)
+    {
+        try {
+            self::where('id', $user_id)->update($update_user_info_data);
+            return true;
+        } catch (\Exception $e) {
+            error('数据库内部错误');
+        }
+    }
+
+    /**
+     * 用户修改密码
+     *
+     * @param [type] $user_id 用户id
+     * @param [type] $update_password_date 用户修改密码数据
+     * @return void
+     */
+    public static function updateUserPassword($user_id, array $update_password_data)
+    {
+        $password = self::where('id', $user_id)->value('password');
+        $salt = self::where('id', $user_id)->value('salt');
+        if (encryption($update_password_data['old_password'], $salt) !== $password) {
+            error('原密码错误');
+        }
+        if (encryption($update_password_data['new_password'], $salt) == $password) {
+            error('新密码不能和原密码相同');
+        }
+
+        try {
+            self::where('id', $user_id)->update(['password' => encryption($update_password_data['new_password'], $salt)]);
+            return true;
+        } catch (\Exception $e) {
+            error('数据库内部错误');
+        }
+    }
+
+    /**
+     * 头像获取器
+     *
+     * @param [type] $value
+     * @param [type] $data
+     * @return void
+     */
+    public function getAttrAttr($value,$data)
+    {
+        if (empty($value)) {
+            return null;
+        }
+        if (Env::get('FILE.ISLOCAL')) {
+            return Env::get('FILE.PATH');
         }
     }
 }

@@ -5,9 +5,10 @@
 namespace app\index\controller;
 
 use app\BaseController;
+use app\model\InviteRecord;
 use app\model\User as UserModel;
 
-class User extends BaseController
+class User extends Auth
 {
     /**
      * 用户信息
@@ -16,8 +17,9 @@ class User extends BaseController
      */
     public function getUserInfo()
     {
-        // $user_info = UserModel::getUserInfoById($this->getUserId());
-        // success('用户信息', $user_info);
+        $user_id = input('user_id', $this->getUserId());
+        $user_info = UserModel::getUserInfoById($user_id);
+        success('用户信息', $user_info);
     }
 
     /**
@@ -27,7 +29,22 @@ class User extends BaseController
      */
     public function updateUserInfo()
     {
-        
+        $update_user_info_data = [
+            'username'         => input('username', ''),
+            'nickname'         => input('nickname', ''),
+            'email'            => input('email', ''),
+            'real_name'        => input('real_name', ''),
+            'attr'             => input('attr', ''),
+            'personal_profile' => input('personal_profile', '')
+        ];
+        $update_user_info_data = array_filter($update_user_info_data);
+
+        $res = UserModel::updateUserInfo($this->getUserId(), $update_user_info_data);
+        if ($res) {
+            success('修改成功');
+        } else {
+            error('修改失败');
+        }
     }
 
     /**
@@ -37,17 +54,17 @@ class User extends BaseController
      */
     public function updateUserPassword()
     {
+        $update_password_data = [
+            'new_password' => input('new_password'),
+            'old_password' => input('old_password')
+        ];
 
-    }
-
-    /**
-     * 获取我的邀请码
-     *
-     * @return void
-     */
-    public function inviteCode()
-    {   
-
+        $res = UserModel::updateUserPassword($this->getUserId(), $update_password_data);
+        if ($res) {
+            success('修改成功');
+        } else {
+            error('修改失败');
+        }
     }
 
     /**
@@ -57,6 +74,11 @@ class User extends BaseController
      */
     public function inviteRecord()
     {
+        $where = [
+            ['id', '=', $this->getUserId()],
+        ];
 
+        $invite_list = InviteRecord::getInviteRecord($where);
+        success('用户邀请列表', $invite_list);
     }
 }

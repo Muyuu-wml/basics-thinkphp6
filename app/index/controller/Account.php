@@ -49,6 +49,7 @@ class Account extends BaseController
         if($res['status'] == 1){
             error('此用户已被锁定');
         }
+        
         $jwt_data = TokenService::getToken($res['id']);
         success('登录成功', $jwt_data);
     }
