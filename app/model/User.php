@@ -107,35 +107,19 @@ class User extends Model
     }
 
     /**
-     * 通过用户手机号获取用户信息
-     *
-     * @param [type] $mobile 手机号
-     * @return void
-     */
-    public static function getUserByMobile($mobile)
-    {
-        $user = self::field('id, username, nickname, mobile, email, balance, attr, personal_profile, invite_code, status')->where('mobile', $mobile)->where('delete_time', null)->find();
-        if ($user) {
-            return $user;
-        } else {
-            error('没有此用户信息');
-        }
-    }
-
-    /**
-     * 通过用户id获取用户信息
+     * 获取用户信息
      *
      * @param [type] $user_id 用户id
      * @return void
      */
-    public static function getUserInfoById($user_id)
+    public static function getUserInfo($where)
     {
-        $user = self::field('id, username, nickname, mobile, email, balance, attr, personal_profile, invite_code, status')->where('id', $user_id)->where('delete_time', null)->find();
+        $user = self::field('id, username, nickname, mobile, email, balance, attr, personal_profile, invite_code, status')->where($where)->find();
         if ($user) {
             if (empty($user['invite_code'])) {
                 $invite_code = self::getInviteCode();
                 try {
-                    self::where('id', $user_id)->update(['invite_code' => $invite_code]);
+                    self::where($where)->update(['invite_code' => $invite_code]);
                     $user['invite_code'] = $invite_code;
                 } catch (\Exception $e) {
                     error('数据库内部错误');

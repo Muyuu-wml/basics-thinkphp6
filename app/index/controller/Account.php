@@ -43,7 +43,7 @@ class Account extends BaseController
             }
             // 判断短信验证码是否正确
             SmsService::checkSmsCode($login_data['sms_code_key'], $login_data['sms_code']);
-            $res = User::getUserByMobile($login_data['mobile']);
+            $res = User::getUserInfo(['moblie' => $login_data['mobile']]);
         }
 
         if($res['status'] == 1){

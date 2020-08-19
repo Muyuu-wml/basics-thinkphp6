@@ -17,9 +17,14 @@ class User extends Auth
      */
     public function getUserInfo()
     {
-        $user_id = input('user_id', $this->getUserId());
-        $user_info = UserModel::getUserInfoById($user_id);
+        $where = [
+            ['id', '=', input('user_id', $this->getUserId())],
+            ['status', '=', 0],
+            ['delete_time', '=', null]
+        ];
+        $user_info = UserModel::getUserInfo($where);
         success('用户信息', $user_info);
+        
     }
 
     /**
