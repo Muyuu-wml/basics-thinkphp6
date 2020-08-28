@@ -27,7 +27,7 @@ class File extends Auth
         $file = request()->file('file');
         if (!empty($file)) {
             $res = FileService::uploadFile($file);
-            if ($res) {
+            if ($res === true) {
                 success('上传成功', $res);
             } else {
                 error('上传失败');

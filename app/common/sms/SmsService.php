@@ -11,6 +11,14 @@ use think\facade\Cache;
 
 class SmsService extends BaseController
 {
+    /**
+     * 发送短信
+     *
+     * @param [type] $mobile 手机号
+     * @param [type] $action 用途
+     * @param string $type 运营商，默认阿里短信
+     * @return void
+     */
     public static function send($mobile, $action, $type = 'Ali')
     {
         if(self::isSend($mobile)){
@@ -28,6 +36,7 @@ class SmsService extends BaseController
         if ($res !== true) {
             error($res);
         } else {
+            // 验证码存入缓存，有效期为5分钟
             Cache::set($sms_data['sms_code_key'], $sms_data['sms_code'], 60*5);
             self::setSendTime($mobile);
         }

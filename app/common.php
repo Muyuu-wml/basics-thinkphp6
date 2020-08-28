@@ -40,7 +40,7 @@ function error($msg = 'error', $data = [], $code = 400)
  * @param $variate 任意类型变量
  * @param string $delimiter 分隔符
  */
-function convertArray($variate, $delimiter = ',')
+function convert_array($variate, $delimiter = ',')
 {
     //如果是数组，则直接返回
     if (is_array($variate)) return $variate;
@@ -60,7 +60,7 @@ function convertArray($variate, $delimiter = ',')
  * @param [type] $param 数组
  * @return void
  */
-function convertXml($param)
+function convert_xml($param)
 {
     $xml = "<xml>";
     foreach ($param as $key => $value) {
@@ -90,7 +90,7 @@ function UUID(){
  *
  * @return void
  */
-function inviteCode()
+function invite_code()
 {
     $code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     $rand = $code[rand(0, 25)]
@@ -136,7 +136,7 @@ function salt($length = 8, $chars = null)
  *
  * @return void
  */
-function makeOrderNo(){
+function make_order_no(){
     //生成24位唯一订单号码，格式：YYYY-MMDD-HHII-SS-NNNN,NNNN-CC，其中：YYYY=年份，MM=月份，DD=日期，HH=24格式小时，II=分，SS=秒，NNNNNNNN=随机数，CC=检查码
 
     //订单号码主体（YYYYMMDDHHIISSNNNNNNNN）
@@ -160,16 +160,11 @@ function makeOrderNo(){
  *
  * @param [type] $password 密码
  * @param [type] $salt 密码盐
- * @param string $type 加密方式 默认md5
  * @return void
  */
-function encryption($password, $salt, $type = 'md5')
+function encryption($password, $salt)
 {
-    if ($type == 'md5') {
-        return md5(md5($password . $salt));
-    } else {
-        return hash('sha1', $password . $salt);
-    }
+    return md5(md5($password . $salt));
 }
 
 /**
@@ -224,4 +219,71 @@ function http_post($url, $data = [], $is_json_post = 0){
     $output = curl_exec($curl);
     curl_close($curl);
     return $output;
+}
+
+/**
+ * 获取客户端IP地址
+ *
+ * @param integer $type 返回类型 0 返回IP地址 1 返回IPV4地址数字
+ * @param boolean $adv 是否进行高级模式获取（有可能被伪装）
+ * @return void
+ */
+function get_client_ip($type = 0,$adv=false) {
+    $type       =  $type ? 1 : 0;
+    static $ip  =   NULL;
+    if ($ip !== NULL) return $ip[$type];
+    if($adv){
+        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $arr    =   explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            $pos    =   array_search('unknown',$arr);
+            if(false !== $pos) unset($arr[$pos]);
+            $ip     =   trim($arr[0]);
+        }elseif (isset($_SERVER['HTTP_CLIENT_IP'])) {
+            $ip     =   $_SERVER['HTTP_CLIENT_IP'];
+        }elseif (isset($_SERVER['REMOTE_ADDR'])) {
+            $ip     =   $_SERVER['REMOTE_ADDR'];
+        }
+    }elseif (isset($_SERVER['REMOTE_ADDR'])) {
+        $ip     =   $_SERVER['REMOTE_ADDR'];
+    }
+    // IP地址合法验证
+    $long = sprintf("%u",ip2long($ip));
+    $ip   = $long ? array($ip, $long) : array('0.0.0.0', 0);
+    return $ip[$type];
+}
+
+/**
+ * 时间差
+ *
+ * @param [type] $time 时间戳
+ * @return void
+ */
+function mdate($time = NULL) {
+    $rtime = date("m-d H:i",$time);
+    $htime = date("H:i",$time);
+
+    $time = time() - $time;
+
+    if ($time < 60) {
+        $str = '刚刚';
+    }
+    elseif ($time < 60 * 60) {
+        $min = floor($time/60);
+        $str = $min.'分钟前';
+    }
+    elseif ($time < 60 * 60 * 24) {
+        $h = floor($time/(60*60));
+        $str = $h.'小时前 '.$htime;
+    }
+    elseif ($time < 60 * 60 * 24 * 3) {
+        $d = floor($time/(60*60*24));
+        if($d==1)
+           $str = '昨天 '.$rtime;
+        else
+           $str = '前天 '.$rtime;
+    }
+    else {
+        $str = $rtime;
+    }
+    return $str;
 }

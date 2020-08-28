@@ -75,9 +75,28 @@ class Order extends Model
     {
         try {
             $order_list = self::field('id, user_id, out_trade_no, goods_id, goods_name, amount, status, pay_type, create_time')->where($where)->where('delete_time', null)->paginate(10);
+            if (empty($order_list)) {
+                $order_list = [];
+            }
             return $order_list;
         } catch (\Exception $e) {
             error('数据库内部错误');
         }
+    }
+
+    public static function confirmReceipt($out_trade_no, $user_id)
+    {
+        $order = self::where('out_trade_no', $out_trade_no)->where('user_id', $user_id)->where('status', 1)->find();
+        if(empty($order)){
+            error('没有此订单');
+        }
+        try {
+            $order->status = 3;
+            $order->save();
+        } catch (\Exception $e) {
+            error('数据库内部错误');
+        }
+
+        return true;
     }
 }

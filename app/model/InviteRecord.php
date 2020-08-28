@@ -11,6 +11,9 @@ class InviteRecord extends Model
         $invite_list = self::where($where)->with(['toUserInfo' => function ($query){
             $query->field('id, username, attr, mobile, email, status');
         }])->select();
+        if (empty($invite_list)) {
+            $invite_list = [];
+        }
         return $invite_list;
     }
 

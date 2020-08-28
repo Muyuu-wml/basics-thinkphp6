@@ -138,7 +138,7 @@ class User extends Model
      */
     public static function getInviteCode()
     {
-        $invite_code = inviteCode();
+        $invite_code = invite_code();
         if (self::recode($invite_code)) {
             return $invite_code;
         } else {

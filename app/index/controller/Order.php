@@ -18,7 +18,7 @@ class Order extends Auth
     {
         $order_data = [
             'user_id'      => $this->getUserId(),
-            'out_trade_no' => makeOrderNo(),
+            'out_trade_no' => make_order_no(),
             'goods_id'     => input('goods_id'),
             'pay_type'     => input('pay_type'), // 支付方式（支付宝支付：alipay 微信支付：wxpay）
             'quantity'     => input('quantity', 1)
@@ -50,7 +50,7 @@ class Order extends Auth
         $pay_type = input('pay_type');
         if ($pay_type == 'wxpay') {
             $post_xml = file_get_contents('php://input');
-            $post_array = convertArray($post_xml);
+            $post_array = convert_array($post_xml);
             $out_trade_no = $post_array['out_trade_no'];
         } elseif ($pay_type == 'alipay') {
             $out_trade_no = input('out_trade_no');
@@ -72,5 +72,25 @@ class Order extends Auth
         ];
         $order_list = OrderModel::getOrderList($where);
         success('订单列表', $order_list);
+    }
+
+    /**
+     * 用户确认收货
+     *
+     * @return void
+     */
+    public function confirmReceipt()
+    {
+        $out_trade_no = input('out_trade_no');
+        if (empty($out_trade_no)) {
+            error('订单号不能为空');
+        }
+
+        $res = OrderModel::confirmReceipt($out_trade_no, $this->getUserId());
+        if ($res === true) {
+            success('确认收货成功');
+        } else {
+            error('确认收货失败');
+        }
     }
 }

@@ -45,7 +45,7 @@ class User extends Auth
         $update_user_info_data = array_filter($update_user_info_data);
 
         $res = UserModel::updateUserInfo($this->getUserId(), $update_user_info_data);
-        if ($res) {
+        if ($res === true) {
             success('修改成功');
         } else {
             error('修改失败');
@@ -65,7 +65,7 @@ class User extends Auth
         ];
 
         $res = UserModel::updateUserPassword($this->getUserId(), $update_password_data);
-        if ($res) {
+        if ($res === true) {
             success('修改成功');
         } else {
             error('修改失败');
