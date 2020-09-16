@@ -11,7 +11,7 @@
  Target Server Version : 80012
  File Encoding         : 65001
 
- Date: 16/09/2020 10:29:51
+ Date: 16/09/2020 10:34:49
 */
 
 SET NAMES utf8mb4;
@@ -33,12 +33,6 @@ CREATE TABLE `account_detail`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of account_detail
--- ----------------------------
-INSERT INTO `account_detail` VALUES (1, '1', 'test', '1', '2020-08-13 14:47:52', '2020-08-13 14:47:52', NULL);
-INSERT INTO `account_detail` VALUES (2, '1', 'test', '1', '2020-08-13 14:51:53', '2020-08-13 14:51:53', NULL);
-
--- ----------------------------
 -- Table structure for admin
 -- ----------------------------
 DROP TABLE IF EXISTS `admin`;
@@ -58,12 +52,6 @@ CREATE TABLE `admin`  (
   `last_login_time` datetime(0) NULL DEFAULT NULL COMMENT '最后登录时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of admin
--- ----------------------------
-INSERT INTO `admin` VALUES (6, 'admin', NULL, '', '55dd920a330202e57a8df9d8a421403f', 'OHXbV2ON', 'wml', '', NULL, NULL, '2020-08-27 11:25:20', '2020-08-27 11:26:00', '2020-08-27 11:26:00');
-INSERT INTO `admin` VALUES (7, 'wml', NULL, '', '4f879f68827a26e384f0625cd2dd070e', 'lXbXuTyl', 'wml', '', NULL, NULL, '2020-08-27 11:26:38', '2020-08-27 11:27:02', '2020-08-27 11:27:01');
 
 -- ----------------------------
 -- Table structure for carousel
@@ -95,11 +83,6 @@ CREATE TABLE `goods`  (
 ) ENGINE = MyISAM AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of goods
--- ----------------------------
-INSERT INTO `goods` VALUES (1, 'test', 1.00, '2020-08-13 14:04:32', '2020-08-13 14:04:35', NULL);
-
--- ----------------------------
 -- Table structure for invite_record
 -- ----------------------------
 DROP TABLE IF EXISTS `invite_record`;
@@ -110,11 +93,6 @@ CREATE TABLE `invite_record`  (
   `create_time` datetime(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of invite_record
--- ----------------------------
-INSERT INTO `invite_record` VALUES (1, 1, 4, '2020-08-19 10:12:08');
 
 -- ----------------------------
 -- Table structure for notice
@@ -151,12 +129,6 @@ CREATE TABLE `order`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of order
--- ----------------------------
-INSERT INTO `order` VALUES (1, 1, '202008131447517265210930', 1, 'test', 1.00, 0, 'wxpay', '2020-08-13 14:47:52', '2020-08-13 14:47:52', NULL);
-INSERT INTO `order` VALUES (2, 1, '202008131451528803991127', 1, 'test', 1.00, 3, 'wxpay', '2020-08-13 14:51:53', '2020-08-27 10:37:40', NULL);
-
--- ----------------------------
 -- Table structure for user
 -- ----------------------------
 DROP TABLE IF EXISTS `user`;
@@ -180,10 +152,5 @@ CREATE TABLE `user`  (
   `last_login_time` datetime(0) NULL DEFAULT NULL COMMENT '最后登录时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of user
--- ----------------------------
-INSERT INTO `user` VALUES (5, 'muyuu', 'wml', '17766280406', '1013300437@qq.com', '55dd920a330202e57a8df9d8a421403f', 'OHXbV2ON', 'wml', NULL, '', '', '', 0, NULL, '2020-08-19 14:55:33', '2020-09-16 10:25:21', '2020-09-16 10:25:20');
 
 SET FOREIGN_KEY_CHECKS = 1;
