@@ -29,6 +29,7 @@ class Account extends BaseController
             'sms_code'     => input('sms_code'),
             'sms_code_key' => input('sms_code_key'),
         ];
+        // type false的时候为密码登录，true的时候为短信登录
         if (!$login_data['type']) {
             try {
                 validate(Login::class)->scene('login_password')->check($login_data);
@@ -63,7 +64,10 @@ class Account extends BaseController
     public function getAccessTokenByRefreshToken()
     {
         $access_token = request()->header('Authorization');
-        $refresh_token = input('refresh_token');
+        $refresh_token = request()->header('refresh_token');
+        if(empty($refresh_token)) {
+            $refresh_token = input('refresh_token');
+        }
 
         if (empty($access_token) || empty($refresh_token)) {
             error('缺少token');

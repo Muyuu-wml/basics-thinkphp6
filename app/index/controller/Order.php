@@ -49,8 +49,8 @@ class Order extends Auth
     {
         $pay_type = input('pay_type');
         if ($pay_type == 'wxpay') {
-            $post_xml = file_get_contents('php://input');
-            $post_array = convert_array($post_xml);
+            $post_xml     = file_get_contents('php://input');
+            $post_array   = convert_array($post_xml);
             $out_trade_no = $post_array['out_trade_no'];
         } elseif ($pay_type == 'alipay') {
             $out_trade_no = input('out_trade_no');
