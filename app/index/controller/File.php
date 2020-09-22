@@ -26,8 +26,9 @@ class File extends Auth
 
         $file = request()->file('file');
         if (!empty($file)) {
+            // uploadFile，三个参数，1、$file,文件，2、$file_size，文件大小默认4mb，3、$file_ext，文件类型，默认'jpg,png,gif,jpeg'
             $res = FileService::uploadFile($file);
-            if ($res === true) {
+            if ($res) {
                 success('上传成功', $res);
             } else {
                 error('上传失败');

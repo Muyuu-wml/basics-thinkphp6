@@ -45,7 +45,6 @@ class AliSmsCode implements BaseSmsCode
                 //进行Cookie保存
                 return true;
             } else {
-                dd($opRes);
                 return self::getErrorMessage($opRes['Code']);
             }
         } catch (ClientException $e) {

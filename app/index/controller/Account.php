@@ -57,13 +57,13 @@ class Account extends BaseController
     }
 
     /**
-     * 通过RefreshToken获取AccessToken
+     * 双token模式，通过RefreshToken获取AccessToken
      *
      * @return void
      */
     public function getAccessTokenByRefreshToken()
     {
-        $access_token = request()->header('Authorization');
+        $access_token  = request()->header('Authorization');
         $refresh_token = request()->header('refresh_token');
         if(empty($refresh_token)) {
             $refresh_token = input('refresh_token');

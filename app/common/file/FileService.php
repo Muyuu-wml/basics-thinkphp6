@@ -12,7 +12,6 @@ use think\exception\ValidateException;
 
 class FileService extends BaseController
 {
-    
     public static function uploadFile($file, $file_size = 4194304, $file_ext = 'jpg,png,gif,jpeg')
     {
         try {

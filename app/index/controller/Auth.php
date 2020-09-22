@@ -11,6 +11,8 @@ class Auth extends BaseController
 
     /**
      * 控制器初始化方法，用于总体控制用户是否登陆，验证token，以及权限控制
+     *
+     * @return void
      */
     public function initialize()
     {
