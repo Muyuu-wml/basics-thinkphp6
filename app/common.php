@@ -75,13 +75,14 @@ function convert_xml($param)
  *
  * @return void
  */
-function UUID(){
+function UUID()
+{
     $char_id = md5(uniqid(mt_rand(), true));
     $uuid = substr($char_id, 0, 8)
-        .substr($char_id, 8, 4)
-        .substr($char_id,12, 4)
-        .substr($char_id,16, 4)
-        .substr($char_id,20,12);
+        . substr($char_id, 8, 4)
+        . substr($char_id, 12, 4)
+        . substr($char_id, 16, 4)
+        . substr($char_id, 20, 12);
     return $uuid;
 }
 
@@ -136,22 +137,23 @@ function salt($length = 8, $chars = null)
  *
  * @return void
  */
-function make_order_no(){
+function make_order_no()
+{
     //生成24位唯一订单号码，格式：YYYY-MMDD-HHII-SS-NNNN,NNNN-CC，其中：YYYY=年份，MM=月份，DD=日期，HH=24格式小时，II=分，SS=秒，NNNNNNNN=随机数，CC=检查码
 
     //订单号码主体（YYYYMMDDHHIISSNNNNNNNN）
-    $order_id_main = date('YmdHis') . rand(10000000,99999999);
+    $order_id_main = date('YmdHis') . rand(10000000, 99999999);
 
     //订单号码主体长度
     $order_id_len = strlen($order_id_main);
     $order_id_sum = 0;
 
-    for($i=0; $i<$order_id_len; $i++){
-        $order_id_sum += (int)(substr($order_id_main,$i,1));
+    for ($i = 0; $i < $order_id_len; $i++) {
+        $order_id_sum += (int)(substr($order_id_main, $i, 1));
     }
 
     //唯一订单号码（YYYYMMDDHHIISSNNNNNNNNCC）
-    $order_id = $order_id_main . str_pad((100 - $order_id_sum % 100) % 100,2,'0',STR_PAD_LEFT);
+    $order_id = $order_id_main . str_pad((100 - $order_id_sum % 100) % 100, 2, '0', STR_PAD_LEFT);
     return $order_id;
 }
 
@@ -162,7 +164,7 @@ function make_order_no(){
  * @param [type] $salt 密码盐
  * @return void
  */
-function encryption($password, $salt)
+function encryption($password, $salt = '')
 {
     return md5(md5($password . $salt));
 }
@@ -174,11 +176,12 @@ function encryption($password, $salt)
  * @param array $data 请求数据
  * @return void
  */
-function http_get($url, $data = array()) {
+function http_get($url, $data = array())
+{
     $curl = curl_init();
-    if($data){
+    if ($data) {
         $submit_url = $url;
-    }else{
+    } else {
         //这里的$data 如果传递的是数组需要http_build_query($data)
         $submit_url = $url . '?' . http_build_query($data);
     }
@@ -186,7 +189,7 @@ function http_get($url, $data = array()) {
     curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($curl, CURLOPT_TIMEOUT,60);
+    curl_setopt($curl, CURLOPT_TIMEOUT, 60);
     $output = curl_exec($curl);
     curl_close($curl);
     return $output;
@@ -200,25 +203,34 @@ function http_get($url, $data = array()) {
  * @param integer $is_json_post 是否转为json数据
  * @return void
  */
-function http_post($url, $data = [], $is_json_post = 0){
+function http_post($url, $data = [], $json = 0)
+{
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $url);
     curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
     if (!empty($data)) {
+        if ($json && is_array($data)) {
+            $data = json_encode($data);
+        }
         curl_setopt($curl, CURLOPT_POST, 1);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-    }
-    if($is_json_post){
-        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-            'Content-Type: application/json'
-        ));
+        if ($json) {
+            curl_setopt($curl, CURLOPT_HEADER, 0);
+            curl_setopt($curl, CURLOPT_HTTPHEADER, [
+                'Content-Type: application/json; charset=utf-8',
+                'Content-Length:' . strlen($data)
+            ]);
+        }
     }
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($curl, CURLOPT_TIMEOUT,60);
-    $output = curl_exec($curl);
+    $res = curl_exec($curl);
+    $errorno  = curl_errno($curl);
+    if ($errorno) {
+        return ['errorno' => false, 'errmsg' => $errorno];
+    }
     curl_close($curl);
-    return $output;
+    return $res;
 }
 
 /**
@@ -228,26 +240,27 @@ function http_post($url, $data = [], $is_json_post = 0){
  * @param boolean $adv 是否进行高级模式获取（有可能被伪装）
  * @return void
  */
-function get_client_ip($type = 0,$adv=false) {
+function get_client_ip($type = 0, $adv = false)
+{
     $type       =  $type ? 1 : 0;
     static $ip  =   NULL;
     if ($ip !== NULL) return $ip[$type];
-    if($adv){
+    if ($adv) {
         if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $arr    =   explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-            $pos    =   array_search('unknown',$arr);
-            if(false !== $pos) unset($arr[$pos]);
-            $ip     =   trim($arr[0]);
-        }elseif (isset($_SERVER['HTTP_CLIENT_IP'])) {
-            $ip     =   $_SERVER['HTTP_CLIENT_IP'];
-        }elseif (isset($_SERVER['REMOTE_ADDR'])) {
-            $ip     =   $_SERVER['REMOTE_ADDR'];
+            $arr = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            $pos = array_search('unknown', $arr);
+            if (false !== $pos) unset($arr[$pos]);
+            $ip = trim($arr[0]);
+        } elseif (isset($_SERVER['HTTP_CLIENT_IP'])) {
+            $ip = $_SERVER['HTTP_CLIENT_IP'];
+        } elseif (isset($_SERVER['REMOTE_ADDR'])) {
+            $ip = $_SERVER['REMOTE_ADDR'];
         }
-    }elseif (isset($_SERVER['REMOTE_ADDR'])) {
-        $ip     =   $_SERVER['REMOTE_ADDR'];
+    } elseif (isset($_SERVER['REMOTE_ADDR'])) {
+        $ip = $_SERVER['REMOTE_ADDR'];
     }
     // IP地址合法验证
-    $long = sprintf("%u",ip2long($ip));
+    $long = sprintf("%u", ip2long($ip));
     $ip   = $long ? array($ip, $long) : array('0.0.0.0', 0);
     return $ip[$type];
 }
@@ -258,32 +271,68 @@ function get_client_ip($type = 0,$adv=false) {
  * @param [type] $time 时间戳
  * @return void
  */
-function mdate($time = NULL) {
-    $rtime = date("m-d H:i",$time);
-    $htime = date("H:i",$time);
+function mdate($time = NULL)
+{
+    $rtime = date("m-d H:i", $time);
+    $htime = date("H:i", $time);
 
     $time = time() - $time;
 
     if ($time < 60) {
         $str = '刚刚';
-    }
-    elseif ($time < 60 * 60) {
-        $min = floor($time/60);
-        $str = $min.'分钟前';
-    }
-    elseif ($time < 60 * 60 * 24) {
-        $h = floor($time/(60*60));
-        $str = $h.'小时前 '.$htime;
-    }
-    elseif ($time < 60 * 60 * 24 * 3) {
-        $d = floor($time/(60*60*24));
-        if($d==1)
-           $str = '昨天 '.$rtime;
+    } elseif ($time < 60 * 60) {
+        $min = floor($time / 60);
+        $str = $min . '分钟前';
+    } elseif ($time < 60 * 60 * 24) {
+        $h = floor($time / (60 * 60));
+        $str = $h . '小时前 ' . $htime;
+    } elseif ($time < 60 * 60 * 24 * 3) {
+        $d = floor($time / (60 * 60 * 24));
+        if ($d == 1)
+            $str = '昨天 ' . $rtime;
         else
-           $str = '前天 '.$rtime;
-    }
-    else {
+            $str = '前天 ' . $rtime;
+    } else {
         $str = $rtime;
     }
     return $str;
+}
+
+/**
+ * 微信信息解密
+ * @param string $appid 小程序id
+ * @param string $sessionKey 小程序密钥
+ * @param string $encryptedData 在小程序中获取的encryptedData
+ * @param string $iv 在小程序中获取的iv
+ * @return array 解密后的数组
+ */
+function decryptData($appid, $sessionKey, $encryptedData, $iv)
+{
+    $OK = 0;
+    $IllegalAesKey = -41001;
+    $IllegalIv = -41002;
+    $IllegalBuffer = -41003;
+    $DecodeBase64Error = -41004;
+
+    if (strlen($sessionKey) != 24) {
+        return $IllegalAesKey;
+    }
+    $aesKey = base64_decode($sessionKey);
+
+    if (strlen($iv) != 24) {
+        return $IllegalIv;
+    }
+    $aesIV = base64_decode($iv);
+
+    $aesCipher = base64_decode($encryptedData);
+
+    $result = openssl_decrypt($aesCipher, "AES-128-CBC", $aesKey, 1, $aesIV);
+    $dataObj = json_decode($result);
+    if ($dataObj == NULL) {
+        return $IllegalBuffer;
+    }
+    if ($dataObj->watermark->appid != $appid) {
+        return $DecodeBase64Error;
+    }
+    return json_decode($result, true);
 }
