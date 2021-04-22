@@ -16,12 +16,6 @@ class Auth extends BaseController
      */
     public function initialize()
     {
-        // 设置请求方法
-        header("Access-Control-Allow-Methods: POST, GET, PUT, DELETE, OPTIONS");
-        // 设置跨域允许包含的头
-        header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Referer, User-Agent, Authorization, X-Auth-Token, If-Match, If-Modified-Since, If-None-Match, If-Unmodified-Since");
-        //设置允许所有域访问
-        header("Access-Control-Allow-Origin: *");
         if (request()->method() == 'OPTIONS') {
             // options 方法探测 header
             exit('ok');
