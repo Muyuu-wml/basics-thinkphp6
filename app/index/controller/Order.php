@@ -21,7 +21,7 @@ class Order extends Auth
             'out_trade_no' => make_order_no(),
             'goods_id'     => input('goods_id'),
             'pay_type'     => input('pay_type'), // 支付方式（支付宝支付：alipay 微信支付：wxpay）
-            'quantity'     => input('quantity', 1)
+            'quantity'     => input('quantity', 1)// 数量 默认为1
         ];
 
         try {

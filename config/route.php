@@ -35,7 +35,7 @@ return [
     // 默认控制器名
     'default_controller'    => 'Index',
     // 默认操作名
-    'default_action'        => 'index',
+    'default_action'        => 'api',
     // 操作方法后缀
     'action_suffix'         => '',
     // 默认JSONP格式返回的处理方法
