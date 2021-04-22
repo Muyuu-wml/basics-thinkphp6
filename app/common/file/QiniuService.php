@@ -56,8 +56,9 @@ class QiniuService extends BaseController
             return false;
         } else {
             $domain = config('system.qiniu_domain');
-            $data = 'http://' . $domain . '/' . $ret['key'];
-            return $data;
+            // 返回完整路径
+            $path = 'http://' . $domain . '/' . $ret['key'];
+            return $path;
         }
     }
 }
