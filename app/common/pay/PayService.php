@@ -22,7 +22,7 @@ class PayService extends BaseController
             $outTradeNo = $order_info['out_trade_no']; //你自己的商品订单号
             $payAmount  = $order_info['amount']; //付款金额，单位:元
             $orderName  = $order_info['goods_name']; //订单标题
-            $notifyUrl  = Env::get('APP.DOMAIN_NAME').'/index/Order/notify/notify?pay_type=wxpay'; //付款成功后的回调地址(不要有问号)
+            $notifyUrl  = Env::get('APP.DOMAIN_NAME').'/api/Order/notify/notify?pay_type=wxpay'; //付款成功后的回调地址(不要有问号)
             $returnUrl  = Env::get('APP.DOMAIN_NAME'); //付款成功后，页面跳转的地址
             $wapUrl     = Env::get('APP.DOMAIN_NAME'); //WAP网站URL地址
             $wapName    = Env::get('APP.APP_NAME'); //WAP 网站名
@@ -41,7 +41,7 @@ class PayService extends BaseController
         } elseif ($order_info['pay_type'] == 'alipay') {
             $appid         = config('system.appid');
             $rsaPrivateKey = config('system.rsaPrivateKey');
-            $notifyUrl     = Env::get('APP.DOMAIN_NAME').'/index/Order/notify?pay_status=alipay'; //付款成功后的异步回调地址
+            $notifyUrl     = Env::get('APP.DOMAIN_NAME').'/api/Order/notify?pay_status=alipay'; //付款成功后的异步回调地址
             $outTradeNo    = $order_info['out_trade_no']; //你自己的商品订单号，不能重复
             $payAmount     = $order_info['amount']; //付款金额，单位:元
             $orderName     = $order_info['goods_name']; //订单标题
