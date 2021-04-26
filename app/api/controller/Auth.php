@@ -35,14 +35,14 @@ class Auth extends BaseController
             error('AccessToken is empty', [], 401);
         }
 
-        $controller = Request()->controller();
-        $action = Request()->action();
+        $controller = request()->controller();
+        $action = request()->action();
 
         $res = TokenService::checkToken($token);
         if ($res['state'] == true || in_array("{$controller}/{$action}", $this->white_list)) {
             $this->user_id = $res['user_id'];
         } else {
-            error($res['msg']);
+            error($res['msg'], [], 401);
         }
     }
 
