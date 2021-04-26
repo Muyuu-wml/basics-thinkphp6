@@ -227,7 +227,7 @@ function http_post($url, $data = [], $json = 0)
     $res = curl_exec($curl);
     $errorno  = curl_errno($curl);
     if ($errorno) {
-        return ['errorno' => false, 'errmsg' => $errorno];
+        return $errorno;
     }
     curl_close($curl);
     return $res;
