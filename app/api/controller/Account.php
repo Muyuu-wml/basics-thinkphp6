@@ -57,27 +57,6 @@ class Account extends BaseController
     }
 
     /**
-     * 双token模式，通过RefreshToken获取AccessToken
-     *
-     * @return void
-     */
-    public function getAccessTokenByRefreshToken()
-    {
-        $access_token  = request()->header('Authorization');
-        $refresh_token = request()->header('refresh_token');
-        if(empty($refresh_token)) {
-            $refresh_token = input('refresh_token');
-        }
-
-        if (empty($access_token) || empty($refresh_token)) {
-            error('缺少token');
-        }
-
-        $jwt_data = TokenService::getAccessTokenByRefreshToken($access_token, $refresh_token);
-        success('登录成功', $jwt_data);
-    }
-
-    /**
      * 注册
      *
      * @return void

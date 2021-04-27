@@ -6,7 +6,6 @@
 return [
     //jwt加密的key
     'access_jwt_key'    => 'access_jwt_key',
-    'refresh_jwt_key' => 'refresh_jwt_key',
 
     // 阿里支付密钥
     'appid'         => '', // https://open.alipay.com 账户中心->密钥管理->开放平台密钥，填写添加了电脑网站支付的应用的APPID
