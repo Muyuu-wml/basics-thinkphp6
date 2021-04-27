@@ -38,9 +38,11 @@ class Auth extends BaseController
             $res = TokenService::checkToken($token);
             if ($res['state'] == true) {
                 $this->user_id = $res['user_id'];
-            } elseif(!in_array("{$controller}/{$action}", $this->white_list)) {
-                error('请先登录', [], 401);
+            } else {
+                error($res['msg'], [], 401);
             }
+        } elseif(!in_array("{$controller}/{$action}", $this->white_list)) {
+            error('请先登录', [], 401);
         }
     }
 
