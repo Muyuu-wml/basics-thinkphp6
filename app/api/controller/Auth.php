@@ -31,18 +31,16 @@ class Auth extends BaseController
         }
 
         //判断用户token是否过期或者是否非法
-        if (empty($token)) {
-            error('AccessToken is empty', [], 401);
-        }
-
         $controller = request()->controller();
         $action = request()->action();
 
-        $res = TokenService::checkToken($token);
-        if ($res['state'] == true || in_array("{$controller}/{$action}", $this->white_list)) {
-            $this->user_id = $res['user_id'];
-        } else {
-            error($res['msg'], [], 401);
+        if (!empty($token)) {
+            $res = TokenService::checkToken($token);
+            if ($res['state'] == true) {
+                $this->user_id = $res['user_id'];
+            } elseif(!in_array("{$controller}/{$action}", $this->white_list)) {
+                error('请先登录', [], 401);
+            }
         }
     }
 

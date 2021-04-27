@@ -115,7 +115,7 @@ class TokenService extends BaseController
                 if (!empty($token_arr['user_id']) && !empty($token_arr['expire_time'])) {
                     //判断时间是否过期
                     if (time() <= $token_arr['expire_time']) {
-                        return ['state' => false, 'msg' => 'Valid AccessToken', 'user_id' => $token_arr['user_id']];
+                        return ['state' => true, 'msg' => 'Valid AccessToken', 'user_id' => $token_arr['user_id']];
                     } else {
                         return ['state' => false, 'msg'=> '登录过期请重新登录','user_id' => $token_arr['user_id']];
                     }
