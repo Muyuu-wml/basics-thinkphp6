@@ -36,7 +36,7 @@ class Auth extends BaseController
 
         if (!empty($token)) {
             $res = TokenService::checkToken($token);
-            if ($res['state'] == true) {
+            if ($res['state'] == true || in_array("{$controller}/{$action}", $this->white_list)) {
                 $this->user_id = $res['user_id'];
             } else {
                 error($res['msg'], [], 401);

@@ -120,10 +120,10 @@ class TokenService extends BaseController
                         return ['state' => false, 'msg'=> '登录过期请重新登录','user_id' => $token_arr['user_id']];
                     }
                 } else {
-                    return ['state' => false, 'msg'=> 'Invalid AccessToken'];
+                    error('Invalid AccessToken', [], 401);
                 }
             } else {
-                return ['state' => false, 'msg'=> 'Invalid AccessToken'];
+                error('Invalid AccessToken', [], 401);
             }
         }
     }
