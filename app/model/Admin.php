@@ -52,10 +52,10 @@ class Admin extends Model
         
         try {
             self::create($admin_data);
-            return true;
         } catch (\Exception $e) {
             error($e->getMessage());
         }
+        return true;
     }
 
     /**
